@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -38,4 +38,4 @@ jobs:
         
     - name: Deploy with Helm
       run: |
-        helm install go-app ./go-app-chart
+        helm install go-app .go-app-chart
