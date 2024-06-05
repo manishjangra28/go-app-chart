@@ -1,55 +1,35 @@
-name: Deploy Helm Chart to EKS
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
+      
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
+        aws-region: us-east-1 # Change to your AWS region
+    
     - name: Install kubectl
       run: |
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x kubectl
-        sudo mv kubectl /usr/local/bin/
-
-    - name: Install aws-iam-authenticator
-      run: |
-        curl -Lo aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/latest/download/aws-iam-authenticator-linux-amd64
-        chmod +x aws-iam-authenticator
-        sudo mv aws-iam-authenticator /usr/local/bin/
-
-    - name: Update kubeconfig
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws eks update-kubeconfig --region us-east-1 --name manish-eks-01
-
+        chmod +x./kubectl
+        sudo mv./kubectl /usr/local/bin/kubectl
+        kubectl version --client
+        
     - name: Install Helm
       run: |
-        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
-    - name: Deploy Helm Chart
-      run: |
-        # Navigate to the directory containing your Helm chart
-        cd .
-
+        curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm-archive-keyring.gp
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm-archive-keyring.gp] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.repo
+        sudo apt-get update && sudo apt-get install helm
         
-
-        # Install or upgrade the Helm chart
-        helm upgrade --install my-release .
+    - name: Update kubeconfig
+      run: |
+        # Assuming you have a script or command to update your kubeconfig for the EKS cluster
+        # Example: aws eks update-kubeconfig --region us-east1 --name manish-eks-01
+        
+    - name: Deploy with Helm
+      run: |
+        helm upgrade --install my-release./ --namespace default
