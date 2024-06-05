@@ -38,4 +38,4 @@ jobs:
         
     - name: Deploy with Helm
       run: |
-        helm upgrade --install my-release./ --namespace default
+        helm install go-app go-app-chart
