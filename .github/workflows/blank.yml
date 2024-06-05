@@ -34,7 +34,7 @@ jobs:
     - name: Update kubeconfig
       run: |
         # Assuming you have a script or command to update your kubeconfig for the EKS cluster
-        # Example: aws eks update-kubeconfig --region us-east1 --name manish-eks-01
+        aws eks update-kubeconfig --region us-east1 --name manish-eks-01
         
     - name: Deploy with Helm
       run: |
