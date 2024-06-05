@@ -38,4 +38,4 @@ jobs:
         
     - name: Deploy with Helm
       run: |
-        helm install go-app .go-app-chart
+        helm install go-app ./go-app-chart
