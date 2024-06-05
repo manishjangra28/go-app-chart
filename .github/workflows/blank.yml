@@ -26,15 +26,24 @@ jobs:
         chmod +x kubectl
         sudo mv kubectl /usr/local/bin/
         kubectl version --client
+
+    - name: Install aws-iam-authenticator
+      run: |
+        curl -Lo aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/latest/download/aws-iam-authenticator-linux-amd64
+        chmod +x aws-iam-authenticator
+        sudo mv aws-iam-authenticator /usr/local/bin/
+
+        
+    - name: Update kubeconfig
+      run: |
+        # Assuming you have a script or command to update your kubeconfig for the EKS cluster
+        aws eks update-kubeconfig --region us-east-1 --name manish-eks-01    
         
     - name: Install Helm
       run: |
         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
         
-    - name: Update kubeconfig
-      run: |
-        # Assuming you have a script or command to update your kubeconfig for the EKS cluster
-        aws eks update-kubeconfig --region us-east-1 --name manish-eks-01
+    
         
     - name: Deploy with Helm
       run: |
